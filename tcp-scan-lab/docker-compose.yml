@@ -1,0 +1,32 @@
+services:
+  hostA:
+    build: ./hostA
+    image: tcp-scan-lab-hosta
+    container_name: hostA
+    hostname: hostA
+    cap_add:
+      - NET_RAW      # nmap SYN(-sS) 스캔에 필요 (raw socket)
+      - NET_ADMIN
+    tty: true
+    stdin_open: true
+    networks:
+      scanlab:
+        ipv4_address: 172.20.0.10
+
+  hostB:
+    build: ./hostB
+    image: tcp-scan-lab-hostb
+    container_name: hostB
+    hostname: hostB
+    cap_add:
+      - NET_ADMIN    # iptables로 filtered 포트 시연에 필요
+    networks:
+      scanlab:
+        ipv4_address: 172.20.0.20
+
+networks:
+  scanlab:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
